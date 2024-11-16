@@ -7,6 +7,8 @@ import (
 	"encoding/csv"
 	"fmt"
 	"os"
+	"path/filepath"
+	"strings"
 )
 
 type Table struct {
@@ -15,7 +17,16 @@ type Table struct {
 }
 
 func ReadCSVFile(filename string, tableNames ...string) ([]Table, error) {
-	file, err := os.Open(filename)
+	absPath, err := filepath.Abs(filename)
+	if err != nil {
+		return nil, err
+	}
+
+	if !strings.HasSuffix(absPath, ".csv") {
+		return nil, fmt.Errorf("invalid file type, only CSV files are allowed")
+	}
+
+	file, err := os.Open(absPath)
 	if err != nil {
 		return nil, err
 	}

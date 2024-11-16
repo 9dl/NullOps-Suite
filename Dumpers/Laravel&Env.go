@@ -169,7 +169,7 @@ func getTableNames(db *sql.DB) ([]string, error) {
 }
 
 func downloadTableData(db *sql.DB, tableName string, directory string) (int, error) {
-	query := fmt.Sprintf("SELECT * FROM %s", tableName)
+	query := fmt.Sprintf("SELECT * FROM `%s`", Helpers.SanitizeString(tableName))
 	rows, err := db.Query(query)
 	if err != nil {
 		return 0, err
@@ -187,12 +187,12 @@ func downloadTableData(db *sql.DB, tableName string, directory string) (int, err
 	for i := range values {
 		valuePtrs[i] = &values[i]
 	}
-	if err := os.MkdirAll(directory, os.ModePerm); err != nil {
+	if err := os.MkdirAll(Helpers.SanitizeFile(directory), os.ModePerm); err != nil {
 		return 0, err
 	}
 
 	fileName := filepath.Join(directory, tableName+".csv")
-	file, err := os.Create(fileName)
+	file, err := os.Create(Helpers.SanitizeFile(fileName))
 	if err != nil {
 		return 0, err
 	}

@@ -156,11 +156,11 @@ func DirectoryExists(path string) bool {
 }
 
 func DownloadAndExtractFile(url, folderPath string) error {
-	if err := os.MkdirAll(folderPath, os.ModePerm); err != nil {
+	if err := os.MkdirAll(SanitizeFile(folderPath), os.ModePerm); err != nil {
 		return err
 	}
 
-	resp, err := http.Get(url)
+	resp, err := http.Get(SanitizeURL(url))
 	if err != nil {
 		return err
 	}
@@ -189,14 +189,14 @@ func DownloadAndExtractFile(url, folderPath string) error {
 	defer zipFile.Close()
 
 	for _, file := range zipFile.File {
-		targetPath := filepath.Join(folderPath, file.Name)
+		targetPath := filepath.Join(SanitizeFile(folderPath), file.Name)
 		if file.FileInfo().IsDir() {
 			err := os.MkdirAll(targetPath, os.ModePerm)
 			CLI_Handlers.LogError(err)
 			continue
 		}
 
-		targetFile, err := os.Create(targetPath)
+		targetFile, err := os.Create(SanitizeFile(targetPath))
 		if err != nil {
 			return err
 		}

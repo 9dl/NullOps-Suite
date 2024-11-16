@@ -1,6 +1,7 @@
 package Interface
 
 import (
+	"NullOps/CLI_Handlers"
 	"fmt"
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/mem"
@@ -29,7 +30,8 @@ func getUsage() (float64, float64, error) {
 func Clear() {
 	cmd := exec.Command("cmd", "/c", "cls")
 	cmd.Stdout = os.Stdout
-	cmd.Run()
+	err := cmd.Run()
+	CLI_Handlers.LogError(err)
 }
 
 func Title(title string) {

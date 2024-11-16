@@ -1,6 +1,7 @@
 package CLI_Handlers
 
 import (
+	"NullOps/Helpers"
 	Interface "NullOps/Interface"
 	"bufio"
 	"fmt"
@@ -25,7 +26,7 @@ func GetFilePath() string {
 }
 
 func ReadLines(filename string) ([]string, error) {
-	file, err := os.Open(filename)
+	file, err := os.Open(Helpers.SanitizeFile(filename))
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +50,7 @@ func AppendToFile(filename string, lines []string) error {
 	fileMutex.Lock()
 	defer fileMutex.Unlock()
 
-	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
+	file, err := os.OpenFile(Helpers.SanitizeString(filename), os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
 	if err != nil {
 		return err
 	}
@@ -62,7 +63,8 @@ func AppendToFile(filename string, lines []string) error {
 			return err
 		}
 	}
-	writer.Flush()
+	err = writer.Flush()
+	LogError(err)
 
 	return nil
 }
