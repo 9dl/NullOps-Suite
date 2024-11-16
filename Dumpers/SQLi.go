@@ -40,7 +40,7 @@ func constructSQLMapCommand(config SQLMapConfig, additionalArgs ...string) *exec
 		return nil
 	}
 
-	return exec.Command(baseArgs[0], append(baseArgs[1:], additionalArgs...)...)
+	return exec.Command(baseArgs[0], append(baseArgs[1:], additionalArgs...)...) //nolint:gosec
 }
 
 func runSQLMapCommand(config SQLMapConfig, additionalArgs ...string) (string, error) {
@@ -167,7 +167,7 @@ func SQLiDumper() {
 	Interface.Gradient("SQLi Dumper By Visage (NullOps)")
 
 	go func() {
-		if Helpers.Running == true {
+		if Helpers.Running {
 			Interface.DumperTitle("NullOps", Dumped, Failed, Empty, checked, total)
 			time.Sleep(1 * time.Second)
 		} else {

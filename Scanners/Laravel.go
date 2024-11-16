@@ -42,7 +42,7 @@ func scanLaravel(config *Helpers.Runner) *Helpers.RunnerResult {
 			}
 		} else if re_normal.MatchString(responeStr) {
 			return &Helpers.RunnerResult{
-				Line:   Helpers.ExtractDomain(config.Line) + fmt.Sprintf(" | Not Laravel."),
+				Line:   Helpers.ExtractDomain(config.Line) + " | Not Laravel.",
 				Status: true,
 				Error:  nil,
 			}

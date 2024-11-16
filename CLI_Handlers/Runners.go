@@ -69,7 +69,7 @@ func AppendToFile(filename string, lines []string) error {
 	}
 	err = writer.Flush()
 	if err != nil {
-		fmt.Errorf("Error flushing writer: %v", err)
+		fmt.Printf("Error flushing writer: %v/n", err)
 	}
 
 	return nil

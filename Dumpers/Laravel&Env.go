@@ -50,7 +50,7 @@ func LaravelnEnvDumper() {
 	Interface.Gradient("Env & Laravel Dumper By Visage (NullOps)")
 
 	go func() {
-		if Helpers.Running == true {
+		if Helpers.Running {
 			Interface.DumperTitle("NullOps", Dumped, Failed, Empty, checked, total)
 			time.Sleep(1 * time.Second)
 		} else {

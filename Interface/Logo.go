@@ -3,12 +3,12 @@ package Interface
 import (
 	"fmt"
 	"github.com/pterm/pterm"
-	"golang.org/x/crypto/ssh/terminal"
+	"golang.org/x/term"
 	"os"
 )
 
 func getTerminalWidth() int {
-	screenWidth, _, err := terminal.GetSize(int(os.Stdout.Fd()))
+	screenWidth, _, err := term.GetSize(int(os.Stdout.Fd()))
 	if err != nil {
 		screenWidth = 80
 	}

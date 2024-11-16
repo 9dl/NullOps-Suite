@@ -137,11 +137,7 @@ func IsPythonInstalled() bool {
 	}
 
 	_, err = exec.LookPath("python3")
-	if err == nil {
-		return true
-	}
-
-	return false
+	return err == nil
 }
 
 func DirectoryExists(path string) bool {
@@ -171,7 +167,7 @@ func DownloadAndExtractFile(url, folderPath string) error {
 	}
 
 	filePath := filepath.Join(folderPath, "sqlmap.zip")
-	file, err := os.Create(filePath)
+	file, err := os.Create(SanitizeFile(filePath))
 	if err != nil {
 		return err
 	}

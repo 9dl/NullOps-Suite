@@ -18,14 +18,18 @@ func scanPorts(config *Helpers.Runner) *Helpers.RunnerResult {
 		conn, err := net.DialTimeout("tcp", address, 1*time.Second)
 		if err == nil {
 			err := CLI_Handlers.AppendToFile(Helpers.OutputPath+"/OpenPorts.txt", []string{address})
+			defer func(conn net.Conn) {
+				err := conn.Close()
+				if err != nil {
+					CLI_Handlers.LogError(err)
+				}
+			}(conn)
 			CLI_Handlers.LogError(err)
 			return &Helpers.RunnerResult{
 				Line:   address,
 				Status: true,
 				Error:  nil,
 			}
-			err = conn.Close()
-			CLI_Handlers.LogError(err)
 		}
 	}
 	return &Helpers.RunnerResult{

@@ -102,7 +102,7 @@ func scanCMS(config *Helpers.Runner) *Helpers.RunnerResult {
 	return &Helpers.RunnerResult{
 		Line:   config.Line,
 		Status: false,
-		Error:  fmt.Errorf(detectedCMS),
+		Error:  fmt.Errorf("%v", detectedCMS),
 	}
 }
 
@@ -158,5 +158,6 @@ func ScannerCMS(config *Helpers.ScanConfig) {
 		mu.Lock()
 		Helpers.Checked++
 		mu.Unlock()
+
 	}, config.Threads, lines)
 }

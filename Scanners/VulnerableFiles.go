@@ -38,21 +38,15 @@ var files_vulnerablePaths = []string{
 }
 
 func scanVulnFiles(config *Helpers.Runner) *Helpers.RunnerResult {
-	var siteBackup = []string{
-		fmt.Sprintf("%v.rar", Helpers.ExtractHost(config.Line)),
-		fmt.Sprintf("%v.zip", Helpers.ExtractHost(config.Line)),
-		fmt.Sprintf("%v.7z", Helpers.ExtractHost(config.Line)),
-		fmt.Sprintf("%v.tar", Helpers.ExtractHost(config.Line)),
+	host := Helpers.ExtractHost(config.Line)
 
-		fmt.Sprintf("%v.rar", strings.ToLower(Helpers.ExtractHost(config.Line))),
-		fmt.Sprintf("%v.zip", strings.ToLower(Helpers.ExtractHost(config.Line))),
-		fmt.Sprintf("%v.7z", strings.ToLower(Helpers.ExtractHost(config.Line))),
-		fmt.Sprintf("%v.tar", strings.ToLower(Helpers.ExtractHost(config.Line))),
-
-		fmt.Sprintf("%v.rar", strings.ToUpper(Helpers.ExtractHost(config.Line))),
-		fmt.Sprintf("%v.zip", strings.ToUpper(Helpers.ExtractHost(config.Line))),
-		fmt.Sprintf("%v.7z", strings.ToUpper(Helpers.ExtractHost(config.Line))),
-		fmt.Sprintf("%v.tar", strings.ToUpper(Helpers.ExtractHost(config.Line))),
+	var siteBackups []string
+	for _, ext := range filetypes_vuln {
+		siteBackups = append(siteBackups,
+			fmt.Sprintf("%v%v", host, ext),
+			fmt.Sprintf("%v%v", strings.ToLower(host), ext),
+			fmt.Sprintf("%v%v", strings.ToUpper(host), ext),
+		)
 	}
 
 	for _, payload := range files_vulnerablePaths {
@@ -74,7 +68,7 @@ func scanVulnFiles(config *Helpers.Runner) *Helpers.RunnerResult {
 		}
 	}
 
-	for _, payload := range siteBackup {
+	for _, payload := range siteBackups {
 		_, Error := Helpers.SendRequest(Helpers.ExtractDomain(config.Line)+payload, "GET", "", Helpers.RequestOptions{})
 
 		if Error != nil {
