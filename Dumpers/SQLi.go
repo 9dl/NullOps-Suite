@@ -41,7 +41,7 @@ func constructSQLMapCommand(config SQLMapConfig, additionalArgs ...string) *exec
 	}
 
 	cmdArgs := append(baseArgs[1:], additionalArgs...)
-	return exec.Command(baseArgs[0], cmdArgs...)
+	return exec.Command(Helpers.SanitizeString(baseArgs[0]), cmdArgs...)
 }
 
 func runSQLMapCommand(config SQLMapConfig, additionalArgs ...string) (string, error) {
