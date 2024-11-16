@@ -40,7 +40,8 @@ func constructSQLMapCommand(config SQLMapConfig, additionalArgs ...string) *exec
 		return nil
 	}
 
-	return exec.Command(baseArgs[0], append(baseArgs[1:], additionalArgs...)...) //nolint:gosec
+	cmdArgs := append(baseArgs[1:], additionalArgs...)
+	return exec.Command(baseArgs[0], cmdArgs...)
 }
 
 func runSQLMapCommand(config SQLMapConfig, additionalArgs ...string) (string, error) {

@@ -74,7 +74,7 @@ func SendRequest(url, method, payload string, options RequestOptions) (*Response
 	response.Body = resp.Body()
 
 	if options.LoggingEnabled {
-		//fmt.Printf("Request successful for URL %s with status code %d\n", url, statusCode)
+		fmt.Printf("Request successful for URL %s with status code %d\n", url, statusCode)
 	}
 
 	return response, nil

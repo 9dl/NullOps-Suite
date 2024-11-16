@@ -27,7 +27,7 @@ func captureEnvironmentInfo(responeStr string, url string) (bool, string) {
 }
 
 func scanEnv(config *Helpers.Runner) *Helpers.RunnerResult {
-	response, err := Helpers.SendRequest(Helpers.ExtractDomain(config.Line)+".env", "GET", "", Helpers.RequestOptions{LoggingEnabled: true})
+	response, err := Helpers.SendRequest(Helpers.ExtractDomain(config.Line)+".env", "GET", "", Helpers.RequestOptions{LoggingEnabled: false})
 	if err != nil {
 		return &Helpers.RunnerResult{
 			Line:   config.Line,
