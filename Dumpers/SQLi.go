@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -26,10 +27,30 @@ type SQLMapConfig struct {
 }
 
 func constructSQLMapCommand(config SQLMapConfig, additionalArgs ...string) *exec.Cmd {
-	baseArgs := []string{
-		"python", sqlMapPath, "-u", config.URL, "--risk", config.Risk, "--level", config.Level, "--smart", "--batch", "-o", "--output-dir", outputDir,
+	url := Helpers.SanitizeString(config.URL)
+	risk := Helpers.SanitizeString(config.Risk)
+	level := Helpers.SanitizeString(config.Level)
+
+	sqlMapPath, err := filepath.Abs(sqlMapPath)
+	if err != nil {
+		return nil
 	}
-	return exec.Command(baseArgs[0], append([]string{}, baseArgs[1:]...)...)
+
+	baseArgs := []string{
+		"python",
+		sqlMapPath,
+		"-u", url,
+		"--risk", risk,
+		"--level", level,
+		"--smart",
+		"--batch",
+		"-o",
+		"--output-dir", outputDir,
+	}
+
+	finalArgs := append(baseArgs, additionalArgs...)
+	cmd := exec.Command(finalArgs[0], finalArgs[1:]...)
+	return cmd
 }
 
 func runSQLMapCommand(config SQLMapConfig, additionalArgs ...string) (string, error) {
