@@ -1,0 +1,6 @@
+{
+  "PrintInvalid": false,
+  "Threads": 550,
+  "Timeout": 5000,
+  "ThreadingType": "Lympia"
+}
