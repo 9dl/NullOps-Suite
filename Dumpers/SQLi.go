@@ -89,7 +89,7 @@ func checkSetup() {
 			Interface.Gradient("SQLMap directory does not exist.")
 			Interface.Gradient("Installing please wait....")
 
-			err := Helpers.DownloadAndExtractFile("http://secure.hqdigital.cc:6789/sqlmap.zip", "./")
+			err := Helpers.DownloadAndExtractFile("https://github.com/9dl/NullOps-Suite/releases/download/sqlmap/sqlmap.zip", "./")
 			if err != nil {
 				Interface.Gradient(fmt.Sprintf("Error: %v\n", err))
 			} else {
