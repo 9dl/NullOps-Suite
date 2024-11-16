@@ -23,6 +23,10 @@ go.work
 # JetBrains IDEs
 .idea/
 
+# gobuilder
+builds/
+builds/*
+
 # Qodana
 qodana.yaml
 qodana.sarif.json
