@@ -27,21 +27,9 @@ type SQLMapConfig struct {
 
 func constructSQLMapCommand(config SQLMapConfig, additionalArgs ...string) *exec.Cmd {
 	baseArgs := []string{
-		"python", sqlMapPath, "-u", config.URL, "--risk", config.Risk, "--level", config.Level,
-		"--smart", "--batch", "-o", "--output-dir", outputDir,
+		"python", sqlMapPath, "-u", config.URL, "--risk", config.Risk, "--level", config.Level, "--smart", "--batch", "-o", "--output-dir", outputDir,
 	}
-
-	for i, arg := range additionalArgs {
-		additionalArgs[i] = Helpers.SanitizeString(arg)
-	}
-
-	if len(additionalArgs) == 0 {
-		fmt.Println("Warning: No valid arguments passed.")
-		return nil
-	}
-
-	cmdArgs := append(baseArgs[1:], additionalArgs...)
-	return exec.Command(Helpers.SanitizeString(baseArgs[0]), cmdArgs...)
+	return exec.Command(baseArgs[0], append([]string{}, baseArgs[1:]...)...)
 }
 
 func runSQLMapCommand(config SQLMapConfig, additionalArgs ...string) (string, error) {
