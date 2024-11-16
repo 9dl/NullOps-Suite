@@ -112,7 +112,12 @@ We welcome bug fixes, new features, and improvements to enhance the functionalit
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Attribution-NonCommercial 4.0 International - see the [LICENSE](LICENSE) file for details.
+
+## Disclaimer
+**NullOps Suite is intended for educational and authorized penetration testing purposes only.** 
+The developers are not responsible for any misuse or damage caused by this software. Ensure you have explicit permission from the owner of the system or network before performing any tests.
+Using this tool against systems or networks without proper authorization is illegal and punishable by law. By using this software, you agree to abide by all applicable laws and take full responsibility for your actions.
 
 ---
 
