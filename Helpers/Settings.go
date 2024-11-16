@@ -3,7 +3,6 @@ package Helpers
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"sync"
 )
@@ -28,7 +27,7 @@ func (cm *ConfigurationManager) LoadConfig() {
 	cm.configMu.Lock()
 	defer cm.configMu.Unlock()
 
-	data, err := ioutil.ReadFile("config.json")
+	data, err := os.ReadFile("config.json")
 	if err != nil {
 		cm.config = Configuration{PrintInvalid: false, Threads: 550, ThreadingType: determineStrategy(), Timeout: 5000}
 		cm.saveConfig()
@@ -109,7 +108,7 @@ func (cm *ConfigurationManager) saveConfig() {
 		os.Exit(1)
 	}
 
-	err = ioutil.WriteFile("config.json", data, 0600)
+	err = os.WriteFile("config.json", data, 0600)
 	if err != nil {
 		fmt.Println("Error writing config file:", err)
 		os.Exit(1)
