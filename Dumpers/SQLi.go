@@ -11,7 +11,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"sync/atomic"
 	"time"
 )
 
@@ -204,6 +203,8 @@ func SQLiDumper() {
 			}
 			fmt.Println(output)
 		}
-		atomic.AddInt32(&Helpers.Checked, 1)
+		mu.Lock()
+		Helpers.Checked++
+		mu.Unlock()
 	}, threadCount, urls)
 }

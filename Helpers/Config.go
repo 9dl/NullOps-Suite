@@ -5,13 +5,13 @@ import (
 )
 
 var (
-	Valid          int32  = 0
-	Invalid        int32  = 0
-	Checked        int32  = 0
-	PayloadsTested int32  = 0
-	CPM            int32  = 0
-	HighestCPM     int32  = 0
-	Timeout        int32  = 5000
+	Valid          int    = 0
+	Invalid        int    = 0
+	Checked        int    = 0
+	PayloadsTested int    = 0
+	CPM            int    = 0
+	HighestCPM     int    = 0
+	Timeout        int    = 5000
 	Running        bool   = false
 	OutputPath            = time.Now().Format("15;04;05")
 	ThreadingType  string = "Lympia"

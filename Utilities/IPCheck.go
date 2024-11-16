@@ -6,7 +6,6 @@ import (
 	"NullOps/Interface"
 	"fmt"
 	"net"
-	"sync/atomic"
 	"time"
 )
 
@@ -40,7 +39,7 @@ func ScannerIP(config *Helpers.ScanConfig) {
 
 	go func() {
 		for {
-			Interface.StatsTitle("NullOps", int(atomic.LoadInt32(&Helpers.Valid)), int(atomic.LoadInt32(&Helpers.Invalid)), int(atomic.LoadInt32(&Helpers.Checked)), len(lines))
+			Interface.StatsTitle("NullOps", Helpers.Valid, Helpers.Invalid, Helpers.Checked, len(lines))
 			time.Sleep(2 * time.Second)
 		}
 	}()
@@ -50,14 +49,20 @@ func ScannerIP(config *Helpers.ScanConfig) {
 		RunnerResult := scanIP(&ScanConfig)
 
 		if RunnerResult.Error == nil {
-			atomic.AddInt32(&Helpers.Valid, 1)
+			mu.Lock()
+			Helpers.Valid++
+			mu.Unlock()
 			Interface.Option(config.Name, fmt.Sprintf("%v | Status: %v", RunnerResult.Line, RunnerResult.Status))
 		} else {
-			atomic.AddInt32(&Helpers.Invalid, 1)
+			mu.Lock()
+			Helpers.Invalid++
+			mu.Unlock()
 			if config.PrintInvalid {
 				Interface.Option(config.Name, fmt.Sprintf("%v | Status: %v | Reason: %v", Helpers.ExtractDomain(RunnerResult.Line), RunnerResult.Status, RunnerResult.Error))
 			}
 		}
-		atomic.AddInt32(&Helpers.Checked, 1)
+		mu.Lock()
+		Helpers.Checked++
+		mu.Unlock()
 	}, config.Threads, lines)
 }

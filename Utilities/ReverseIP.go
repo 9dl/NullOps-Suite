@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"net"
 	"strconv"
-	"sync/atomic"
 	"time"
 )
 
@@ -51,8 +50,8 @@ func ScannerReverseIP(config *Helpers.ScanConfig) {
 	CLI_Handlers.LogError(err)
 	go func() {
 		for {
-			tested := strconv.Itoa(int(atomic.LoadInt32(&Helpers.PayloadsTested)))
-			Interface.StatsTitle("NullOps | Payloads Tested: "+tested, int(atomic.LoadInt32(&Helpers.Valid)), int(atomic.LoadInt32(&Helpers.Invalid)), int(atomic.LoadInt32(&Helpers.Checked)), len(lines))
+			tested := strconv.Itoa(Helpers.PayloadsTested)
+			Interface.StatsTitle("NullOps | Payloads Tested: "+tested, Helpers.Valid, Helpers.Invalid, Helpers.Checked, len(lines))
 			time.Sleep(2 * time.Second)
 		}
 	}()
@@ -62,14 +61,20 @@ func ScannerReverseIP(config *Helpers.ScanConfig) {
 		RunnerResult := scanReverseIP(&ScanConfig)
 
 		if RunnerResult.Error == nil {
-			atomic.AddInt32(&Helpers.Valid, 1)
+			mu.Lock()
+			Helpers.Valid++
+			mu.Unlock()
 			Interface.Option(config.Name, fmt.Sprintf("%v | Status: %v", RunnerResult.Line, RunnerResult.Status))
 		} else {
-			atomic.AddInt32(&Helpers.Invalid, 1)
+			mu.Lock()
+			Helpers.Invalid++
+			mu.Unlock()
 			if config.PrintInvalid {
 				Interface.Option(config.Name, fmt.Sprintf("%v | Status: %v | Reason: %v", Helpers.ExtractDomain(RunnerResult.Line), RunnerResult.Status, RunnerResult.Error))
 			}
 		}
-		atomic.AddInt32(&Helpers.Checked, 1)
+		mu.Lock()
+		Helpers.Checked++
+		mu.Unlock()
 	}, config.Threads, lines)
 }

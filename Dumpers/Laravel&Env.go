@@ -12,9 +12,11 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	"sync/atomic"
+	"sync"
 	"time"
 )
+
+var mu sync.Mutex
 
 var (
 	Dumped            = 0
@@ -61,7 +63,9 @@ func LaravelnEnvDumper() {
 
 	Helpers.Threading(func(s string) {
 		PMADump(s)
-		atomic.AddInt32(&Helpers.Checked, 1)
+		mu.Lock()
+		Helpers.Checked++
+		mu.Unlock()
 	}, threadCount, urls)
 }
 

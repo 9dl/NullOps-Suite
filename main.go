@@ -74,7 +74,7 @@ func NullOps() {
 	Interface.Title("NullOps")
 
 	Helpers.ThreadingType = configManager.GetThreadingType()
-	Helpers.Timeout = int32(configManager.GetTimeout())
+	Helpers.Timeout = configManager.GetTimeout()
 
 	Interface.WriteColoredCentered("[«] ================ Threading: ["+configManager.GetThreadingType()+"] ================ [»]", pterm.NewRGB(0, 255, 255))
 	Interface.WriteColoredCentered("[«] ================ Scanners ================ ================ Utilities ================  [»]", pterm.NewRGB(0, 255, 255))
@@ -126,7 +126,7 @@ func NullOps() {
 	Interface.WriteColoredCentered("[«] ==================================================================================== [»]", pterm.NewRGB(0, 255, 255))
 	Interface.WriteColoredCentered(fmt.Sprintf("[«] ========== Threads: [%v] | Timeout (ms): [%v] ========== [»]", configManager.GetThreads(), configManager.GetTimeout()), pterm.NewRGB(0, 255, 255))
 	Interface.WriteColoredCentered("[«] ========== [github.com/9dl/NullOps-Suite] ========== [»]", pterm.NewRGB(0, 255, 255))
-	
+
 	Interface.Input2()
 	_, err = fmt.Scanln(&Option)
 	CLI_Handlers.LogError(err)

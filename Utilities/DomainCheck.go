@@ -6,13 +6,17 @@ import (
 	"NullOps/Interface"
 	"fmt"
 	"strings"
-	"sync/atomic"
+	"sync"
 	"time"
 )
 
+var mu sync.Mutex
+
 func scanDomain(config *Helpers.Runner) *Helpers.RunnerResult {
 	_, Error := Helpers.SendRequest("https://"+strings.ReplaceAll(strings.ReplaceAll(config.Line, "https://", ""), "http://", ""), "GET", "", Helpers.RequestOptions{})
-	atomic.AddInt32(&Helpers.PayloadsTested, 1)
+	mu.Lock()
+	Helpers.PayloadsTested++
+	mu.Unlock()
 
 	if Error == nil {
 		err := CLI_Handlers.AppendToFile(Helpers.OutputPath+"Domains.txt", []string{config.Line})
@@ -41,7 +45,7 @@ func ScannerDomain(config *Helpers.ScanConfig) {
 
 	go func() {
 		for {
-			Interface.StatsTitle("NullOps", int(atomic.LoadInt32(&Helpers.Valid)), int(atomic.LoadInt32(&Helpers.Invalid)), int(atomic.LoadInt32(&Helpers.Checked)), len(lines))
+			Interface.StatsTitle("NullOps", Helpers.Valid, Helpers.Invalid, Helpers.Checked, len(lines))
 			time.Sleep(2 * time.Second)
 		}
 	}()
@@ -51,14 +55,20 @@ func ScannerDomain(config *Helpers.ScanConfig) {
 		RunnerResult := scanDomain(&ScanConfig)
 
 		if RunnerResult.Error == nil {
-			atomic.AddInt32(&Helpers.Valid, 1)
+			mu.Lock()
+			Helpers.Valid++
+			mu.Unlock()
 			Interface.Option(config.Name, fmt.Sprintf("%v | Status: %v", RunnerResult.Line, RunnerResult.Status))
 		} else {
-			atomic.AddInt32(&Helpers.Invalid, 1)
+			mu.Lock()
+			Helpers.Invalid++
+			mu.Unlock()
 			if config.PrintInvalid {
 				Interface.Option(config.Name, fmt.Sprintf("%v | Status: %v | Reason: %v", Helpers.ExtractDomain(RunnerResult.Line), RunnerResult.Status, RunnerResult.Error))
 			}
 		}
-		atomic.AddInt32(&Helpers.Checked, 1)
+		mu.Lock()
+		Helpers.Checked++
+		mu.Unlock()
 	}, config.Threads, lines)
 }

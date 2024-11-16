@@ -7,9 +7,11 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"sync/atomic"
+	"sync"
 	"time"
 )
+
+var mu sync.Mutex
 
 var payloadPMA = []string{
 	"phpmyadmin",
@@ -44,7 +46,11 @@ var payloadPMA3 = []string{
 
 func scanPMA(config *Helpers.Runner) *Helpers.RunnerResult {
 	for _, payload := range payloadPMA {
-		atomic.AddInt32(&Helpers.PayloadsTested, 1)
+
+		mu.Lock()
+		Helpers.PayloadsTested++
+		mu.Unlock()
+
 		Response, Error := Helpers.SendRequest(Helpers.ExtractDomain(config.Line)+payload, "GET", "", Helpers.RequestOptions{})
 
 		if Error == nil {
@@ -82,12 +88,15 @@ func ScannerPMA(config *Helpers.ScanConfig) {
 	go func() {
 		for {
 			if Helpers.Running {
-				tested := strconv.Itoa(int(atomic.LoadInt32(&Helpers.PayloadsTested)))
+				mu.Lock()
+				tested := strconv.Itoa(Helpers.PayloadsTested)
 				elapsedTime := time.Since(startTime)
-				Helpers.CPM = int32(int(Helpers.CalculateCPM(int(atomic.LoadInt32(&Helpers.Valid))+int(atomic.LoadInt32(&Helpers.Invalid)), elapsedTime)))
-				Helpers.HighestCPM = int32(Helpers.BestCPM(int(Helpers.CPM), int(atomic.LoadInt32(&Helpers.HighestCPM))))
+				valid := Helpers.Valid + Helpers.Invalid
+				Helpers.CPM = int(Helpers.CalculateCPM(valid, elapsedTime))
+				Helpers.HighestCPM = Helpers.BestCPM(Helpers.CPM, Helpers.HighestCPM)
+				mu.Unlock()
 
-				Interface.StatsTitle(fmt.Sprintf("NullOps | Payloads Tested: %v | CPM: %v | Highest CPM: %v", tested, int(atomic.LoadInt32(&Helpers.CPM)), int(atomic.LoadInt32(&Helpers.HighestCPM))), int(atomic.LoadInt32(&Helpers.Valid)), int(atomic.LoadInt32(&Helpers.Invalid)), int(atomic.LoadInt32(&Helpers.Checked)), len(lines))
+				Interface.StatsTitle(fmt.Sprintf("NullOps | Payloads Tested: %v | CPM: %v | Highest CPM: %v", tested, Helpers.CPM, Helpers.HighestCPM), Helpers.Valid, Helpers.Invalid, Helpers.Checked, len(lines))
 				time.Sleep(1 * time.Second)
 			} else {
 				return
@@ -104,14 +113,21 @@ func ScannerPMA(config *Helpers.ScanConfig) {
 		RunnerResult := scanPMA(&ScanConfig)
 
 		if RunnerResult.Error == nil {
-			atomic.AddInt32(&Helpers.Valid, 1)
+			mu.Lock()
+			Helpers.Valid++
+			mu.Unlock()
 			Interface.Option(config.Name, fmt.Sprintf("%v | Status: %v", RunnerResult.Line, RunnerResult.Status))
 		} else {
-			atomic.AddInt32(&Helpers.Invalid, 1)
+			mu.Lock()
+			Helpers.Invalid++
+			mu.Unlock()
 			if config.PrintInvalid {
 				Interface.Option(config.Name, fmt.Sprintf("%v | Status: %v | Reason: %v", Helpers.ExtractDomain(RunnerResult.Line), RunnerResult.Status, RunnerResult.Error))
 			}
 		}
-		atomic.AddInt32(&Helpers.Checked, 1)
+
+		mu.Lock()
+		Helpers.Checked++
+		mu.Unlock()
 	}, config.Threads, lines)
 }
