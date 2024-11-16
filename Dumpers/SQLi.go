@@ -35,6 +35,11 @@ func constructSQLMapCommand(config SQLMapConfig, additionalArgs ...string) *exec
 		additionalArgs[i] = Helpers.SanitizeString(arg)
 	}
 
+	if len(additionalArgs) == 0 {
+		fmt.Println("Warning: No valid arguments passed.")
+		return nil
+	}
+
 	return exec.Command(baseArgs[0], append(baseArgs[1:], additionalArgs...)...)
 }
 

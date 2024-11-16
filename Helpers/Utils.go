@@ -156,7 +156,7 @@ func DirectoryExists(path string) bool {
 }
 
 func DownloadAndExtractFile(url, folderPath string) error {
-	if err := os.MkdirAll(SanitizeFile(folderPath), os.ModePerm); err != nil {
+	if err := os.MkdirAll(SanitizeFile(folderPath), 0750); err != nil {
 		return err
 	}
 
@@ -189,9 +189,9 @@ func DownloadAndExtractFile(url, folderPath string) error {
 	defer zipFile.Close()
 
 	for _, file := range zipFile.File {
-		targetPath := filepath.Join(SanitizeFile(folderPath), file.Name)
+		targetPath := filepath.Join(SanitizeFile(folderPath), SanitizeFile(file.Name))
 		if file.FileInfo().IsDir() {
-			err := os.MkdirAll(targetPath, os.ModePerm)
+			err := os.MkdirAll(targetPath, 0750)
 			CLI_Handlers.LogError(err)
 			continue
 		}
@@ -208,7 +208,7 @@ func DownloadAndExtractFile(url, folderPath string) error {
 		}
 		defer sourceFile.Close()
 
-		_, err = io.Copy(targetFile, sourceFile)
+		_, err = io.CopyN(targetFile, sourceFile, 30000*1024*1024) // 30 GB
 		if err != nil {
 			return err
 		}

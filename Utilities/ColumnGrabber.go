@@ -26,7 +26,7 @@ func ReadCSVFile(filename string, tableNames ...string) ([]Table, error) {
 		return nil, fmt.Errorf("invalid file type, only CSV files are allowed")
 	}
 
-	file, err := os.Open(absPath)
+	file, err := os.Open(Helpers.SanitizeFile(absPath))
 	if err != nil {
 		return nil, err
 	}

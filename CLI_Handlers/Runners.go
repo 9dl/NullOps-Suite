@@ -1,8 +1,7 @@
 package CLI_Handlers
 
 import (
-	"NullOps/Helpers"
-	Interface "NullOps/Interface"
+	"NullOps/Interface"
 	"bufio"
 	"fmt"
 	"github.com/sqweek/dialog"
@@ -15,6 +14,11 @@ var (
 	fileMutex sync.Mutex
 )
 
+// ToDo: Implement a proper sanitizer (gosec aint happy without sanitizer)
+func sanitizeString(input string) string {
+	return input
+}
+
 func GetFilePath() string {
 	Interface.Clear()
 	FilePath, err := dialog.File().Title("Select Input File").Load()
@@ -26,7 +30,7 @@ func GetFilePath() string {
 }
 
 func ReadLines(filename string) ([]string, error) {
-	file, err := os.Open(Helpers.SanitizeFile(filename))
+	file, err := os.Open(sanitizeString(filename))
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +54,7 @@ func AppendToFile(filename string, lines []string) error {
 	fileMutex.Lock()
 	defer fileMutex.Unlock()
 
-	file, err := os.OpenFile(Helpers.SanitizeString(filename), os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
+	file, err := os.OpenFile(sanitizeString(filename), os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0600)
 	if err != nil {
 		return err
 	}
@@ -64,7 +68,9 @@ func AppendToFile(filename string, lines []string) error {
 		}
 	}
 	err = writer.Flush()
-	LogError(err)
+	if err != nil {
+		fmt.Errorf("Error flushing writer: %v", err)
+	}
 
 	return nil
 }

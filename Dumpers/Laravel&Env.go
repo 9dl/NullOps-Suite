@@ -169,10 +169,17 @@ func getTableNames(db *sql.DB) ([]string, error) {
 }
 
 func downloadTableData(db *sql.DB, tableName string, directory string) (int, error) {
-	query := fmt.Sprintf("SELECT * FROM `%s`", Helpers.SanitizeString(tableName))
-	rows, err := db.Query(query)
+	query := "SELECT * FROM `?`"
+
+	stmt, err := db.Prepare(query)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("failed to prepare query: %v", err)
+	}
+	defer stmt.Close()
+
+	rows, err := stmt.Query(Helpers.SanitizeString(tableName))
+	if err != nil {
+		return 0, fmt.Errorf("failed to query data: %v", err)
 	}
 	defer rows.Close()
 
@@ -187,7 +194,7 @@ func downloadTableData(db *sql.DB, tableName string, directory string) (int, err
 	for i := range values {
 		valuePtrs[i] = &values[i]
 	}
-	if err := os.MkdirAll(Helpers.SanitizeFile(directory), os.ModePerm); err != nil {
+	if err := os.MkdirAll(Helpers.SanitizeFile(directory), 0750); err != nil {
 		return 0, err
 	}
 
