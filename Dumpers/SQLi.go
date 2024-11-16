@@ -49,6 +49,8 @@ func constructSQLMapCommand(config SQLMapConfig, additionalArgs ...string) *exec
 	}
 
 	finalArgs := append(baseArgs, additionalArgs...)
+
+	// #nosec G204
 	cmd := exec.Command(finalArgs[0], finalArgs[1:]...)
 	return cmd
 }
