@@ -1,10 +1,8 @@
 package CLI_Handlers
 
 import (
-	"NullOps/Interface"
 	"bufio"
 	"fmt"
-	"github.com/sqweek/dialog"
 	"os"
 	"strings"
 	"sync"
@@ -17,16 +15,6 @@ var (
 // ToDo: Implement a proper sanitizer (gosec aint happy without sanitizer)
 func sanitizeString(input string) string {
 	return input
-}
-
-func GetFilePath() string {
-	Interface.Clear()
-	FilePath, err := dialog.File().Title("Select Input File").Load()
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	return FilePath
 }
 
 func ReadLines(filename string) ([]string, error) {
